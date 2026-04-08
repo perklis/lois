@@ -1,0 +1,2 @@
+class FormulaSyntaxError(ValueError):
+    pass
