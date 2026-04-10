@@ -1,8 +1,7 @@
-# Полещук Ольга Владимировна, 421703
 from __future__ import annotations
 from pathlib import Path
 from logic_sdnf import FormulaSyntaxError, build_sdnf
-
+# Полещук Ольга Владимировна, 421703
 
 def read_formula_from_file(path_text: str) -> str:
     path = Path(path_text).expanduser()
@@ -15,17 +14,14 @@ def read_formula_from_file(path_text: str) -> str:
         raise FormulaSyntaxError("Файл пуст")
     return content
 
-
 def read_formula_from_console() -> str:
     text = input("Введите формулу: ").strip()
     if not text:
         raise FormulaSyntaxError("Формула не должна быть пустой")
     return text
 
-
 def process_formula(formula: str) -> str:
     return build_sdnf(formula)
-
 
 def run() -> None:
     while True:
@@ -58,9 +54,7 @@ def run() -> None:
             except FormulaSyntaxError as error:
                 print(f"Ошибка: {error}")
             continue
-
         print("Ошибка: выберите 0, 1 или 2")
-
 
 if __name__ == "__main__":
     run()

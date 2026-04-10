@@ -18,6 +18,7 @@ from logic_sdnf import (
     parse_formula,
     tokenize,
 )
+# Полещук Ольга Владимировна, 421703
 
 
 
@@ -271,6 +272,3 @@ class LogicSdnfTests(unittest.TestCase):
         self.assertEqual(build_sdnf("(A/\\1)"), "A")
         self.assertEqual(build_sdnf("(A\\/0)"), "A")
 
-
-if __name__ == "__main__":
-    unittest.main()

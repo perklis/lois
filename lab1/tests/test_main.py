@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 import main as main
 from logic_sdnf import FormulaSyntaxError
+# Полещук Ольга Владимировна, 421703
 
 
 class MainTests(unittest.TestCase):
@@ -100,7 +101,3 @@ class MainTests(unittest.TestCase):
                     main.run()
         printed = "\n".join(" ".join(str(a) for a in call.args) for call in mocked_print.call_args_list)
         self.assertIn("Ошибка чтения файла", printed)
-
-
-if __name__ == "__main__":
-    unittest.main()

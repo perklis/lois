@@ -2,6 +2,7 @@ import unittest
 from pathlib import Path
 from exceptions import FormulaSyntaxError
 from logic_sdnf import Connective, Constant, Not, Variable, build_sdnf, parse_formula
+# Полещук Ольга Владимировна, 421703
 
 
 class FormulaCorporaTests(unittest.TestCase):
@@ -71,7 +72,3 @@ class FormulaCorporaTests(unittest.TestCase):
             with self.subTest(formula=formula):
                 with self.assertRaises(FormulaSyntaxError):
                     parse_formula(formula)
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,10 +1,12 @@
 from __future__ import annotations
 from exceptions import FormulaSyntaxError
-from typing import Sequence
+from typing import List
 from logic_sdnf import Lexema, Node, Variable, Not, Connective, Constant
 
+
+# Полещук Ольга Владимировна, 421703
 class Parser:
-    def __init__(self, tokens: Sequence[Lexema]):
+    def __init__(self, tokens: List[Lexema]):
         self.tokens = tokens
         self.index = 0
 
@@ -17,16 +19,18 @@ class Parser:
             if type == "RP":
                 if token.type in {"LP", "VAR", "NOT", "CONST"}:
                     raise FormulaSyntaxError(
-                        f"Ожидалась логическая связка в позиции {token.pos + 1}"
+                        f"Ожидалась логическая связка в позиции {token.position + 1}"
                     )
                 raise FormulaSyntaxError(
-                    f"Ожидалась закрывающая скобка в позиции {token.pos + 1}"
+                    f"Ожидалась закрывающая скобка в позиции {token.position + 1}"
                 )
             if type in {"AND", "OR", "IMP", "EQV"}:
                 raise FormulaSyntaxError(
-                    f"Ожидалась логическая связка в позиции {token.pos + 1}"
+                    f"Ожидалась логическая связка в позиции {token.position + 1}"
                 )
-            raise FormulaSyntaxError(f"Синтаксическая ошибка в позиции {token.pos + 1}")
+            raise FormulaSyntaxError(
+                f"Синтаксическая ошибка в позиции {token.position + 1}"
+            )
         self.index += 1
         return token
 
@@ -40,13 +44,15 @@ class Parser:
                 )
             if token.type in {"LP", "VAR", "NOT", "CONST"}:
                 raise FormulaSyntaxError(
-                    f"Ожидалась логическая связка в позиции {token.pos + 1}"
+                    f"Ожидалась логическая связка в позиции {token.position + 1}"
                 )
             if token.type == "RP":
                 raise FormulaSyntaxError(
-                    f"Лишняя закрывающая скобка в позиции {token.pos + 1}"
+                    f"Лишняя закрывающая скобка в позиции {token.position + 1}"
                 )
-            raise FormulaSyntaxError(f"Синтаксическая ошибка в позиции {token.pos + 1}")
+            raise FormulaSyntaxError(
+                f"Синтаксическая ошибка в позиции {token.position + 1}"
+            )
         return node
 
     def parse_expression(self) -> Node:
@@ -57,7 +63,7 @@ class Parser:
             return Constant(self.consume("CONST").value == "1")
         if token.type == "NOT":
             raise FormulaSyntaxError(
-                f"отрицание должно быть обрамлено скобками в позиции {token.pos + 1}"
+                f"отрицание должно быть обрамлено скобками в позиции {token.position + 1}"
             )
         if token.type == "LP":
             self.consume("LP")
@@ -71,10 +77,10 @@ class Parser:
                 token = self.current()
                 if token.type == "RP":
                     raise FormulaSyntaxError(
-                        f"Ожидалась логическая связка в позиции {token.pos + 1}"
+                        f"Ожидалась логическая связка в позиции {token.position + 1}"
                     )
                 raise FormulaSyntaxError(
-                    f"Ожидалась логическая связка в позиции {token.pos + 1}"
+                    f"Ожидалась логическая связка в позиции {token.position + 1}"
                 )
             op = self.current().type
             self.consume(op)
@@ -83,5 +89,5 @@ class Parser:
             self.consume("RP")
             return node
         raise FormulaSyntaxError(
-            f"Ожидалась переменная, константа, отрицание или '(' в позиции {token.pos + 1}"
+            f"Ожидалась переменная, константа, отрицание или '(' в позиции {token.position + 1}"
         )

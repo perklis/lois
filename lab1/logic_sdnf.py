@@ -1,16 +1,15 @@
-# Полещук Ольга Владимировна, 421703
-
 from __future__ import annotations
 from exceptions import FormulaSyntaxError
 from dataclasses import dataclass
-from typing import Dict, List, Sequence, Set
+from typing import Dict, List
+# Полещук Ольга Владимировна, 421703
 
 
 @dataclass(frozen=True)
 class Lexema:
     type: str
     value: str
-    pos: int
+    position: int
 
 
 @dataclass(frozen=True)
@@ -58,49 +57,49 @@ def tokenize(text: str) -> List[Lexema]:
         raise FormulaSyntaxError("Пустая формула")
     check_brackets(text)
     tokens: List[Lexema] = []
-    i = 0
-    while i < len(text):
-        ch = text[i]
+    cur_position = 0
+    while cur_position < len(text):
+        ch = text[cur_position]
         if ch.isspace():
-            i += 1
+            cur_position += 1
             continue
-        if text.startswith("/\\", i):
-            tokens.append(Lexema("AND", "/\\", i))
-            i += 2
+        if text.startswith("/\\", cur_position):
+            tokens.append(Lexema("AND", "/\\", cur_position))
+            cur_position += 2
             continue
-        if text.startswith("\\/", i):
-            tokens.append(Lexema("OR", "\\/", i))
-            i += 2
+        if text.startswith("\\/", cur_position):
+            tokens.append(Lexema("OR", "\\/", cur_position))
+            cur_position += 2
             continue
-        if text.startswith("->", i):
-            tokens.append(Lexema("IMP", "->", i))
-            i += 2
+        if text.startswith("->", cur_position):
+            tokens.append(Lexema("IMP", "->", cur_position))
+            cur_position += 2
             continue
         if ch == "~":
-            tokens.append(Lexema("EQV", "~", i))
-            i += 1
+            tokens.append(Lexema("EQV", "~", cur_position))
+            cur_position += 1
             continue
         if ch == "!":
-            tokens.append(Lexema("NOT", "!", i))
-            i += 1
+            tokens.append(Lexema("NOT", "!", cur_position))
+            cur_position += 1
             continue
         if ch == "(":
-            tokens.append(Lexema("LP", "(", i))
-            i += 1
+            tokens.append(Lexema("LP", "(", cur_position))
+            cur_position += 1
             continue
         if ch == ")":
-            tokens.append(Lexema("RP", ")", i))
-            i += 1
+            tokens.append(Lexema("RP", ")", cur_position))
+            cur_position += 1
             continue
         if ch in {"0", "1"}:
-            tokens.append(Lexema("CONST", ch, i))
-            i += 1
+            tokens.append(Lexema("CONST", ch, cur_position))
+            cur_position += 1
             continue
         if "A" <= ch <= "Z":
-            tokens.append(Lexema("VAR", ch, i))
-            i += 1
+            tokens.append(Lexema("VAR", ch, cur_position))
+            cur_position += 1
             continue
-        raise FormulaSyntaxError(f"Недопустимый символ '{ch}' по индексу {i + 1}")
+        raise FormulaSyntaxError(f"Недопустимый символ '{ch}' по индексу {cur_position + 1}")
     tokens.append(Lexema("EOF", "", len(text)))
     return tokens
 
@@ -110,7 +109,9 @@ def parse_formula(text: str) -> Node:
 
     return Parser(tokenize(text)).parse()
 
+
 from Parser import Parser
+
 
 def sort_strings(values: List[str]) -> List[str]:
     result = values[:]
@@ -125,11 +126,12 @@ def sort_strings(values: List[str]) -> List[str]:
 
 
 def extract_variables(node: Node) -> List[str]:
-    names: Set[str] = set()
+    names: List[str] = []
 
     def go_around_tree(current: Node) -> None:
         if isinstance(current, Variable):
-            names.add(current.name)
+            if current.name not in names:
+                names.append(current.name)
             return
         if isinstance(current, Constant):
             return
@@ -143,7 +145,7 @@ def extract_variables(node: Node) -> List[str]:
         raise FormulaSyntaxError("Неизвестный тип узла")
 
     go_around_tree(node)
-    return sort_strings(list(names))
+    return sort_strings(names)
 
 
 def evaluate(node: Node, assignment: Dict[str, bool]) -> bool:
@@ -170,9 +172,7 @@ def evaluate(node: Node, assignment: Dict[str, bool]) -> bool:
     raise FormulaSyntaxError("Неизвестный тип узла")
 
 
-def get_vars_bool_dict(
-    variables: Sequence[str], values: Sequence[bool]
-) -> Dict[str, bool]:
+def get_vars_bool_dict(variables: List[str], values: List[bool]) -> Dict[str, bool]:
     return {variables[i]: values[i] for i in range(len(variables))}
 
 
